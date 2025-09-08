@@ -13,8 +13,9 @@
 #include <set>
 #include <string>
 #include <unordered_set>
+#include <random>
 
-std::string kYourName = "STUDENT TODO"; // Don't forget to change this!
+std::string kYourName = "Ken Wia";
 
 /**
  * Takes in a file name and returns a set containing all of the applicant names as a set.
@@ -27,8 +28,37 @@ std::string kYourName = "STUDENT TODO"; // Don't forget to change this!
  * below it) to use a `std::unordered_set` instead. If you do so, make sure
  * to also change the corresponding functions in `utils.h`.
  */
-std::set<std::string> get_applicants(std::string filename) {
-  // STUDENT TODO: Implement this function.
+std::set<std::string> get_applicants(const std::string& filename) {
+  std::ifstream fs(filename);
+  if (!fs.is_open()) {
+    std::cerr << "Failed to open file: " << filename << std::endl;
+    exit(1);
+  }
+  std::set<std::string> applicant_set;
+  std::string s;
+
+  while(std::getline(fs, s)){
+    if(!s.empty())
+      applicant_set.insert(s);
+  }
+
+  return applicant_set;
+}
+
+
+std::string getinitials(const std::string& name){
+  std::string result;
+  bool flag = true;
+  for(char c : name){
+    if(flag){
+      result += c;
+      result += '.';
+      flag = false;
+    }else if(c == ' '){
+      flag = true;
+    }
+  }
+  return result;
 }
 
 /**
@@ -39,8 +69,16 @@ std::set<std::string> get_applicants(std::string filename) {
  * @param students  The set of student names.
  * @return          A queue containing pointers to each matching name.
  */
-std::queue<const std::string*> find_matches(std::string name, std::set<std::string>& students) {
-  // STUDENT TODO: Implement this function.
+std::queue<const std::string*> find_matches(const std::string& name, std::set<std::string>& students) {
+  std::string nameI = getinitials(name);
+  std::queue<const std::string*> result;
+
+  for(const auto &s : students){
+    if(getinitials(s) == nameI){
+      result.push(&s);
+    }
+  }
+  return result;
 }
 
 /**
@@ -54,7 +92,18 @@ std::queue<const std::string*> find_matches(std::string name, std::set<std::stri
  *                Will return "NO MATCHES FOUND." if `matches` is empty.
  */
 std::string get_match(std::queue<const std::string*>& matches) {
-  // STUDENT TODO: Implement this function.
+  if(matches.empty())
+    return "NO MATCHES FOUND.";
+  
+  std::mt19937 rng(std::random_device{}());
+  std::uniform_int_distribution<size_t> dist(0, matches.size() - 1);
+  size_t cnt = dist(rng);
+
+  for( ; cnt > 0 ; --cnt){
+    matches.pop();
+  }
+
+  return *matches.front();
 }
 
 /* #### Please don't remove this line! #### */
