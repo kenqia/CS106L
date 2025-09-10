@@ -1,70 +1,36 @@
 #include <string>
 #include <iostream>
 
-using std::string;
-using std::cout; using std::endl;
-
-class player{
+class Player{
     private:
-        string name;
+        std::string name;
+        int MAXHP;
         int HP;
-        size_t MP;
-        size_t ATK;
-        size_t DEF;
+        int MP;
+        int MAXMP;
+        int ATK;
+        int DEF;
         bool living;
     
-    bool check_living(const player& other) const {
-        if(!other.living){
-            cout << other.name << " was cooked." << endl;
-            return false; 
-        }
-        return true;
-    }
+    bool check_living() const;
 
     public:
-        player() : name("you"), HP(100), MP(100), ATK(20), DEF(10), living(true){
+        Player() : name("you"), MAXHP(100), HP(100), MP(100), MAXMP(100), ATK(20), DEF(10), living(true) {}
 
-        }
+        Player(const std::string& name) : name(name), MAXHP(100), HP(100), MP(100), MAXMP(100), ATK(20), DEF(10), living(true){}
 
-        player(const string& name) : name(name), HP(100), MP(100), ATK(20), DEF(10), living(true){
+        Player(const std::string& name, int MAXHP, int HP, int MP, int MAXMP, int ATK, int DEF) : name(name), MAXHP(MAXHP), HP(HP), MP(MP), MAXMP(MAXMP), ATK(ATK), DEF(DEF), living(true){}
 
-        }
+        void attack(Player& other);
+        void magic_attack(Player& other);
+        void heal(int HP);
+        void heal(Player& p, int HP);
 
-        player(const string& name, size_t HP, size_t MP, size_t ATK, size_t DEF) : name(name), HP(HP), MP(MP), ATK(ATK), DEF(DEF), living(true){
+        const std::string& get_name() const { return this->name; }
+        int get_HP() const { return this->HP; }
+        int get_MP() const { return this->MP; }
+        int get_ATK() const { return this->ATK; }
+        int get_DEF() const { return this->DEF; }
+        bool get_living() const { return this->living; }
 
-        }
-
-        void attack(player& other){
-            if(!check_living(other)) return;
-
-            if(this->ATK <= other.DEF){
-                cout << this->name << " can't even hit "<< other.name << "!" << endl;
-            }else{
-                size_t damage =(this->ATK - other.DEF);
-                other.HP -= damage;
-                cout << this->name << " hit "<< other.name << damage <<"!" << endl;
-                if(other.HP <= 0){
-                    other.living = false;
-                    cout << other.name << " so dead!" << endl;
-                }
-            }
-        }
-
-        void heal(player& p, size_t HP){
-            int hp_heal = p.HP + HP; 
-            
-            if(hp_heal > 100) hp_heal = 100;
-
-            cout << p.name << " have healed " << HP <<endl;
-            if(p.HP <= 0 && hp_heal > 0){
-                cout << p.name << " get out of the bed!" << endl;
-            }
-
-            p.HP = hp_heal;
-        }
-
-        const string& get_name() const { return this->name; }
-        size_t get_HP() const { return this->HP; }
-        size_t get_MP() const { return this->MP; }
-        
 };
